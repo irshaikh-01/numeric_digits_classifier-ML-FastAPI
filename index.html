@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Digit Classifier</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 350px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input {
+      margin: 0 auto 15px auto;
+      display: block;
+    }
+
+    button {
+      background: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+
+    img {
+    margin-top: 15px;
+    max-width: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    }
+
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .loading {
+      margin-top: 15px;
+      color: gray;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Digit Classifier</h2>
+
+  <input type="file" id="imageInput" accept="image/*"><br>
+
+  <button onclick="uploadImage()">Classify</button>
+
+  <img id="preview" />
+
+  <p class="loading" id="loadingText"></p>
+  <p class="result" id="predictionResult"></p>
+</div>
+
+<script>
+async function uploadImage() {
+  const input = document.getElementById("imageInput");
+  const preview = document.getElementById("preview");
+  const resultText = document.getElementById("predictionResult");
+  const loadingText = document.getElementById("loadingText");
+
+  if (!input.files[0]) {
+    alert("Please upload a file!");
+    return;
+  }
+
+  const file = input.files[0];
+
+  // Show preview
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    loadingText.textContent = "Processing...";
+
+    const response = await fetch("http://127.0.0.1:8000/predict-image/", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await response.json();
+
+    loadingText.textContent = "";
+    resultText.textContent = `Prediction: ${result.prediction}`;
+
+  } catch (error) {
+    console.error("Error:", error);
+    loadingText.textContent = "";
+    alert("Failed to classify image");
+  }
+}
+</script>
+
+</body>
+</html>
