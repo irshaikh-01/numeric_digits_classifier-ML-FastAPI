@@ -5,11 +5,11 @@ headers = {
 }
 
 files = {
-    # 'file': ('Digit_2.png', '', 'image/png'),
+    # 'file': ('Digit_4.png', '', 'image/png'),
     # 'file': (open("Images/Digit_4.png", "rb"), '', 'image/png'),
-    'file': (open(r"..\Images\Digit_7.png", "rb")),
+    'file': (open(r"Images\Digit_4.png", "rb")),
 }
 
-response = requests.post('http://127.0.0.1:8000/predict-image/', files=files)
-print(response.json()["prediction"])
+response = requests.post('http://127.0.0.1:8000/predict-image/', files=files, timeout=60)
+print(f"Prediction reult : {response.json()["prediction"]}")
 print("Done")
